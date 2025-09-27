@@ -29,9 +29,10 @@ export const createQuestion = async (req, res) => {
 
 export const getQuestions = async (req, res) => {
   try {
-    const { status } = req.query; // optional filter
+    const { status, roomId } = req.query; // optional filters
     const filter = {};
     if (status) filter.status = status;
+    if (roomId) filter.roomId = roomId;
     const qs = await Question.find(filter).sort({ createdAt: -1 });
     res.json(qs);
   } catch (err) {
@@ -43,12 +44,14 @@ export const getQuestions = async (req, res) => {
 export const updateQuestion = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, answer } = req.body;
+    const { status, answer, priority } = req.body;
 
     const update = {};
-    if (status && ["unanswered", "answered", "important"].includes(status))
+    if (status && ["unanswered", "addressed", "rejected"].includes(status))
       update.status = status;
-    if (answer !== undefined) update.answer = answer; // include answer updates
+    if (answer !== undefined) update.answer = answer;
+    if (priority && ["important", "normal"].includes(priority))
+      update.priority = priority;
 
     const q = await Question.findByIdAndUpdate(id, update, { new: true });
     if (!q) return res.status(404).json({ message: "Not found" });
@@ -69,7 +72,7 @@ export const clearQuestions = async (req, res) => {
     // Optionally allow clearing only answered.
     const { onlyAnswered } = req.query;
     if (onlyAnswered === "true") {
-      await Question.deleteMany({ status: "answered" });
+      await Question.deleteMany({ status: "addressed" });
     } else {
       await Question.deleteMany({});
     }
@@ -90,7 +93,7 @@ export const addAnswer = async (req, res) => {
     const updated = await Question.findByIdAndUpdate(
       id,
       { answer, status: "answered" },
-      { new: true }
+      { new: true },
     );
 
     if (!updated) return res.status(404).json({ error: "Not found" });
