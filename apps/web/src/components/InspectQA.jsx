@@ -120,7 +120,7 @@ export default function InspectQA() {
 
   const totalPages = Math.ceil(filteredQuestions.length / pageSize);
 
-  if (user?.role !== "ta" || authLoading) {
+  if ((user?.role !== "ta" && user?.role !== "faculty") || authLoading) {
     return <div>Access denied</div>;
   }
 
