@@ -60,9 +60,9 @@ export default function Landing() {
           ) : (
             <>
               <Button variant="outline" onClick={() => navigate("/login")}>
-                Log in
+                Login
               </Button>
-              <Button onClick={() => navigate("/signup")}>Sign up</Button>
+              <Button onClick={() => navigate("/signup")}>Sign Up</Button>
             </>
           )}
         </div>
@@ -72,33 +72,39 @@ export default function Landing() {
       <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
         <div className="bg-white border-2 border-gray-800 px-16 py-20 text-center min-w-[500px] min-h-[300px] flex flex-col justify-center items-center gap-12 fade-in">
           <h1 className="text-3xl font-normal text-gray-800 m-0 tracking-wide">
-            VidyaVichar
+            vidya vichar
           </h1>
-          <div className="flex flex-col gap-4">
-            {user && lastRoomId && (
+          <div className="flex gap-8 justify-center">
+            {/* Student + Faculty can create/join */}
+            {(user?.role === "student" || user?.role === "faculty") && (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={handleCreateRoom}
+                  className="px-6 py-3 text-base"
+                >
+                  create room
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleJoinRoom}
+                  className="px-6 py-3 text-base"
+                >
+                  join room
+                </Button>
+              </>
+            )}
+
+            {/* TA + Faculty can inspect */}
+            {(user?.role === "ta" || user?.role === "faculty") && (
               <Button
-                onClick={() => navigate(`/room/${lastRoomId}`)}
+                variant="outline"
+                onClick={() => navigate("/inspect-qa")}
                 className="px-6 py-3 text-base"
               >
-                Rejoin Last Room ({lastRoomId})
+                inspect q/a
               </Button>
             )}
-            <div className="flex gap-8 justify-center">
-              <Button
-                variant="outline"
-                onClick={handleCreateRoom}
-                className="px-6 py-3 text-base"
-              >
-                Create Room
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleJoinRoom}
-                className="px-6 py-3 text-base"
-              >
-                Join Room
-              </Button>
-            </div>
           </div>
         </div>
       </div>
