@@ -54,17 +54,14 @@
 
 import React, { useState } from "react";
 
-export default function StickyNote({ q, onUpdate, onDelete, userRole }) {
+export default function StickyNote({ q, onUpdate, userRole }) {
   const [answer, setAnswer] = useState(q.answer || "");
 
   const markStatus = (status) => onUpdate(q._id, { status });
 
   const saveAnswer = () => {
-    if (answer.trim()) onUpdate(q._id, { answer: answer.trim() });
-  };
-  const handleDeleteAnswer = async (id) => {
-    await fetch(`/api/questions/${id}/delete-answer`, { method: "PATCH" });
-    // Optionally update local state for instant feedback
+    if (answer.trim())
+      onUpdate(q._id, { answer: answer.trim(), status: "answered" });
   };
 
   return (
@@ -77,17 +74,21 @@ export default function StickyNote({ q, onUpdate, onDelete, userRole }) {
         {userRole === "faculty" && (
           <>
             <div className="controls">
-              {q.status !== "addressed" && (
-                <button onClick={() => markStatus("addressed")}>
-                  Mark Addressed
+              {q.status !== "answered" && (
+                <button onClick={() => markStatus("answered")}>
+                  Mark Answered
                 </button>
               )}
-              {q.status !== "important" && (
-                <button onClick={() => markStatus("important")}>
-                  Important
+              {q.status !== "rejected" && (
+                <button onClick={() => markStatus("rejected")}>Reject</button>
+              )}
+              {q.priority !== "important" && (
+                <button
+                  onClick={() => onUpdate(q._id, { priority: "important" })}
+                >
+                  Mark Important
                 </button>
               )}
-              <button onClick={() => onDelete(q._id)}>Delete</button>
             </div>
 
             <div className="answer-section">
@@ -98,11 +99,6 @@ export default function StickyNote({ q, onUpdate, onDelete, userRole }) {
                 rows={2}
               />
               <button onClick={saveAnswer}>Save Answer</button>
-              {q.answer && (
-                <button onClick={() => handleDeleteAnswer(q._id)}>
-                  Delete Answer
-                </button>
-              )}
             </div>
           </>
         )}

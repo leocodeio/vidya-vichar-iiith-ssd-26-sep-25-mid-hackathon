@@ -36,15 +36,9 @@ export default function NewQuestionForm({ onAdd }) {
       />
       <div className="form-actions">
         <button type="submit" className="btn-primary">
-          <span style={{ marginRight: "8px" }}>✈️</span>
-          Post Question
+          ✈️ Post Question
         </button>
-        {error && (
-          <div className="error-message">
-            <span style={{ marginRight: "5px" }}>⚠️</span>
-            {error}
-          </div>
-        )}
+        {error && <div className="error-message">⚠️ {error}</div>}
       </div>
     </form>
   );

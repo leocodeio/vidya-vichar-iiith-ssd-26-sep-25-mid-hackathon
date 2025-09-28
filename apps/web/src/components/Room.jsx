@@ -2,11 +2,18 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import { useAuth } from "../context/AuthContext";
-import { fetchQuestions, deleteQuestion, showRoom } from "../api";
+import { fetchQuestions, clearQuestions, showRoom } from "../api";
 import StickyBoard from "./ref/StickyBoard";
 import NewQuestionForm from "./ref/NewQuestionForm";
 
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const SOCKET_URL = "http://localhost:3001";
 
@@ -15,7 +22,8 @@ export default function Room() {
   const { user } = useAuth();
   const [questions, setQuestions] = useState([]);
   const [socket, setSocket] = useState(null);
-  const [filter, setFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("");
   const [isParticipant, setIsParticipant] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -37,7 +45,6 @@ export default function Room() {
         alert("Room not found or access denied");
         return;
       }
-    
 
       const token = document.cookie
         .split("; ")
@@ -55,13 +62,14 @@ export default function Room() {
         console.log("questions", questions);
         setQuestions((prev) => [question, ...prev]);
       });
-      newSocket.on("questionUpdated", ({ question }) => {
+      newSocket.on("updateQuestion", (question) => {
         setQuestions((prev) =>
           prev.map((q) => (q._id === question._id ? question : q))
         );
       });
-      newSocket.on("questionDeleted", (id) => {
-        setQuestions((prev) => prev.filter((q) => q._id !== id));
+
+      newSocket.on("clearQuestions", () => {
+        setQuestions([]);
       });
 
       setSocket(newSocket);
@@ -89,17 +97,12 @@ export default function Room() {
     }
   };
 
-  const handleDeleteQuestion = async (id) => {
-    try {
-      await deleteQuestion(id);
-      setQuestions((prev) => prev.filter((q) => q._id !== id));
-    } catch (error) {
-      console.error("Delete failed");
-    }
-  };
-
   const filteredQuestions = questions.filter(
-    (q) => !filter || q.status === filter
+    (q) =>
+      (!statusFilter || statusFilter === "All" || q.status === statusFilter) &&
+      (!priorityFilter ||
+        priorityFilter === "All" ||
+        q.priority === priorityFilter)
   );
 
   if (loading)
@@ -124,25 +127,62 @@ export default function Room() {
             <NewQuestionForm onAdd={handleAddQuestion} />
           </div>
         )}
-        <div className="mb-4">
-          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-            <option value="">All Questions</option>
-            <option value="unanswered">Unanswered</option>
-            <option value="addressed">Addressed</option>
-            <option value="important">Important</option>
-          </select>
+        <div className="mb-4 flex gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1">Status:</label>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-32">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All</SelectItem>
+                <SelectItem value="unanswered">Unanswered</SelectItem>
+                <SelectItem value="answered">Answered</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Priority:</label>
+            <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+              <SelectTrigger className="w-32">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All</SelectItem>
+                <SelectItem value="important">Important</SelectItem>
+                <SelectItem value="normal">Normal</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <Button
-            onClick={() => setFilter("")}
+            onClick={() => {
+              setStatusFilter("");
+              setPriorityFilter("");
+            }}
             variant="outline"
-            className="ml-2"
           >
-            Clear Filter
+            Clear Filters
           </Button>
+          {user.role === "faculty" && (
+            <Button
+              onClick={async () => {
+                try {
+                  await clearQuestions();
+                  setQuestions([]);
+                } catch (error) {
+                  console.error("Clear failed");
+                }
+              }}
+              variant="destructive"
+            >
+              Clear All Questions
+            </Button>
+          )}
         </div>
         <StickyBoard
           questions={filteredQuestions}
           onUpdate={handleUpdateQuestion}
-          onDelete={handleDeleteQuestion}
           userRole={user.role}
         />
       </div>

@@ -6,7 +6,7 @@ const QuestionSchema = new mongoose.Schema({
   roomId: { type: String, required: true },
   status: {
     type: String,
-    enum: ["unanswered", "addressed", "rejected"],
+    enum: ["unanswered", "answered", "rejected"],
     default: "unanswered",
   },
   answer: { type: String, default: "" },

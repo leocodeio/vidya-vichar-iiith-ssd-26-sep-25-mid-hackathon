@@ -118,3 +118,69 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .stickynote {
+    @apply bg-yellow-100 border-2 border-yellow-400 p-4 m-2 rounded-lg shadow-md min-h-[150px] flex flex-col justify-between;
+  }
+  .stickynote.answered {
+    @apply bg-green-100 border-green-400;
+  }
+  .stickynote.rejected {
+    @apply bg-red-100 border-red-400;
+  }
+  .note-text {
+    @apply text-lg font-medium mb-2;
+  }
+  .note-meta {
+    @apply text-sm text-gray-600;
+  }
+  .controls {
+    @apply flex gap-2 mb-2;
+  }
+  .controls button {
+    @apply px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600;
+  }
+  .answer-section {
+    @apply mt-2;
+  }
+  .answer-section textarea {
+    @apply w-full p-2 border rounded text-sm;
+  }
+  .answer-section button {
+    @apply mt-1 px-2 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-600;
+  }
+  .saved-answer {
+    @apply mt-2 p-2 bg-gray-100 rounded text-sm;
+  }
+  .board {
+    @apply flex flex-wrap justify-center;
+  }
+  .form {
+    @apply bg-white p-4 rounded-lg shadow-md mb-4;
+  }
+  .form textarea {
+    @apply w-full p-2 border rounded resize-none;
+  }
+  .form-actions {
+    @apply flex justify-between items-center mt-2;
+  }
+  .btn-primary {
+    @apply bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600;
+  }
+  .error-message {
+    @apply text-red-500 text-sm;
+  }
+  .filter-bar {
+    @apply flex gap-2 mb-4;
+  }
+  .filter-bar select {
+    @apply p-2 border rounded;
+  }
+  .btn-secondary {
+    @apply bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600;
+  }
+  .btn-danger {
+    @apply bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600;
+  }
+}

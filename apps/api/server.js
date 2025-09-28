@@ -62,7 +62,7 @@ io.use(async (socket, next) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("Client connected:", socket.id, "User:");
+  console.log("Client connected:", socket.id, "User:", socket.user.username);
 
   // 1) Handle the postQuestion event
   socket.on("postQuestion", async (data) => {
@@ -76,7 +76,7 @@ io.on("connection", (socket) => {
         socket.emit("error", { message: "Room ID and question are required" });
         return;
       }
-      
+
       // 1) check if roomId is valid
       const Room = (await import("./models/Room.js")).default;
       const room = await Room.findOne({ roomId });
@@ -84,7 +84,7 @@ io.on("connection", (socket) => {
         socket.emit("error", { message: "Room not found" });
         return;
       }
-      
+
       // 2) prevent duplicate in room
       const Question = (await import("./models/Question.js")).default;
       const existing = await Question.findOne({
@@ -122,7 +122,7 @@ io.on("connection", (socket) => {
     const Question = (await import("./models/Question.js")).default;
     try {
       const update = {};
-      if (status && ["addressed", "rejected"].includes(status))
+      if (status && ["answered", "rejected"].includes(status))
         update.status = status;
       if (answer !== undefined) update.answer = answer;
       if (priority && ["important", "normal"].includes(priority))
@@ -132,7 +132,7 @@ io.on("connection", (socket) => {
         new: true,
       });
       if (question) {
-        io.emit("questionUpdated", { roomId, question });
+        io.emit("updateQuestion", question);
       }
     } catch (error) {
       console.error("Error managing question:", error);

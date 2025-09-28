@@ -51,7 +51,7 @@ export const updateQuestion = async (req, res) => {
     const { status, answer, priority } = req.body;
 
     const update = {};
-    if (status && ["unanswered", "addressed", "rejected"].includes(status))
+    if (status && ["unanswered", "answered", "rejected"].includes(status))
       update.status = status;
     if (answer !== undefined) update.answer = answer;
     if (priority && ["important", "normal"].includes(priority))
@@ -96,7 +96,7 @@ export const addAnswer = async (req, res) => {
 
     const updated = await Question.findByIdAndUpdate(
       id,
-      { answer, status: "addressed" },
+      { answer, status: "answered" },
       { new: true },
     );
 
