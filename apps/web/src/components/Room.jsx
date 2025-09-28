@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { useAuth } from "../context/AuthContext";
 import { fetchQuestions, clearQuestions, showRoom } from "../api";
@@ -18,8 +18,9 @@ import {
 const SOCKET_URL = "http://localhost:3001";
 
 export default function Room() {
+  const navigate = useNavigate();
   const { roomId } = useParams();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [questions, setQuestions] = useState([]);
   const [socket, setSocket] = useState(null);
   const [statusFilter, setStatusFilter] = useState("");
@@ -28,14 +29,18 @@ export default function Room() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    console.log("user", user);
+    if (authLoading) return;
+    if (!user) navigate("/");
 
     const checkAccess = async () => {
       try {
         const room = await showRoom(roomId);
+        console.log("room", room);
         const isUserParticipant = room.participants.some(
-          (p) => p.name === user.username
+          (p) => p.participantId === user._id,
         );
+        console.log("isUserParticipant", isUserParticipant);
         setIsParticipant(isUserParticipant);
         if (!isUserParticipant) {
           alert("You must join the room first");
@@ -64,7 +69,7 @@ export default function Room() {
       });
       newSocket.on("updateQuestion", (question) => {
         setQuestions((prev) =>
-          prev.map((q) => (q._id === question._id ? question : q))
+          prev.map((q) => (q._id === question._id ? question : q)),
         );
       });
 
@@ -83,7 +88,7 @@ export default function Room() {
     checkAccess();
 
     return () => socket?.disconnect();
-  }, [roomId, user]);
+  }, [roomId, user, authLoading]);
 
   const handleAddQuestion = (data) => {
     if (socket) {
@@ -102,10 +107,10 @@ export default function Room() {
       (!statusFilter || statusFilter === "All" || q.status === statusFilter) &&
       (!priorityFilter ||
         priorityFilter === "All" ||
-        q.priority === priorityFilter)
+        q.priority === priorityFilter),
   );
 
-  if (loading)
+  if (authLoading || loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
         Loading...

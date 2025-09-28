@@ -79,16 +79,19 @@ export default function StickyNote({ q, onUpdate, userRole }) {
                   Mark Answered
                 </button>
               )}
-              {q.status !== "rejected" && (
+              {q.status !== "rejected" && q.status !== "answered" && (
                 <button onClick={() => markStatus("rejected")}>Reject</button>
               )}
-              {q.priority !== "important" && (
-                <button
-                  onClick={() => onUpdate(q._id, { priority: "important" })}
-                >
-                  Mark Important
-                </button>
-              )}
+              <button
+                onClick={() =>
+                  onUpdate(q._id, {
+                    priority:
+                      q.priority === "important" ? "normal" : "important",
+                  })
+                }
+              >
+                {q.priority === "important" ? "Mark Normal" : "Mark Important"}
+              </button>
             </div>
 
             <div className="answer-section">

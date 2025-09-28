@@ -29,6 +29,7 @@ export default function CreateRoom() {
       const data = await apiCreateRoom({
         roomName,
         creatorName: user.username,
+        creatorId: user._id,
       });
       setRoomId(data.roomId);
       setOpen(true);

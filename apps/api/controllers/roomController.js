@@ -3,12 +3,15 @@ import Question from "../models/Question.js";
 
 export const createRoom = async (req, res) => {
   try {
-    const { roomName, creatorName } = req.body;
+    const { roomName, creatorName, creatorId } = req.body;
     if (!roomName) {
       return res.status(400).json({ error: "roomName is required" });
     }
     if (!creatorName) {
       return res.status(400).json({ error: "creatorName is required" });
+    }
+    if (!creatorId) {
+      return res.status(400).json({ error: "creatorId is required" });
     }
 
     const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -17,18 +20,16 @@ export const createRoom = async (req, res) => {
       roomName,
       roomId,
       createdBy: creatorName,
-      participants: [{ name: creatorName }],
+      participants: [{ name: creatorName, participantId: creatorId }],
     });
 
     await room.save();
-    res
-      .status(201)
-      .json({
-        roomId,
-        roomName,
-        createdBy: creatorName,
-        message: "Room created successfully",
-      });
+    res.status(201).json({
+      roomId,
+      roomName,
+      createdBy: creatorName,
+      message: "Room created successfully",
+    });
   } catch (error) {
     console.error("Error creating room:", error);
     res.status(500).json({ error: "Failed to create room" });
@@ -38,13 +39,16 @@ export const createRoom = async (req, res) => {
 export const joinRoom = async (req, res) => {
   try {
     const { roomId } = req.query;
-    const { name } = req.body;
-
+    const { name, participantId } = req.body;
+    console.log(name, participantId);
     if (!roomId) {
       return res.status(400).json({ error: "roomId is required" });
     }
     if (!name) {
       return res.status(400).json({ error: "name is required" });
+    }
+    if (!participantId) {
+      return res.status(400).json({ error: "participantId is required" });
     }
 
     const room = await Room.findOne({ roomId });
@@ -54,7 +58,10 @@ export const joinRoom = async (req, res) => {
 
     const existingParticipant = room.participants.find((p) => p.name === name);
     if (!existingParticipant) {
-      room.participants.push({ name });
+      room.participants.push({ name, participantId });
+      await room.save();
+    } else if (!existingParticipant.participantId) {
+      existingParticipant.participantId = participantId;
       await room.save();
     }
 

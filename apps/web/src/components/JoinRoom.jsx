@@ -18,8 +18,13 @@ export default function JoinRoom() {
       return;
     }
     setError("");
+    console.log(roomId, user);
     try {
-      await apiJoinRoom({ roomId, name: user.username });
+      await apiJoinRoom({
+        roomId,
+        name: user.username,
+        participantId: user._id,
+      });
       navigate(`/room/${roomId}`);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to join room");
