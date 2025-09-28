@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import http from "http";
 import { Server } from "socket.io";
 import cookieParser from "cookie-parser";
+import jwt from "jsonwebtoken";
 import connectDB from "./config/db.js";
 import questionsRouter from "./routes/questions.js";
 import roomsRouter from "./routes/rooms.js";
@@ -22,8 +23,8 @@ const MONGODB_URI =
 
 await connectDB(MONGODB_URI);
 
-app.use("/api/questions",protect, questionsRouter);
-app.use("/api/rooms",protect, roomsRouter);
+app.use("/api/questions", protect, questionsRouter);
+app.use("/api/rooms", protect, roomsRouter);
 app.use("/api/auth", authRouter);
 
 app.get("/", (req, res) => res.send("VidyaVichar API running"));
@@ -35,15 +36,39 @@ const io = new Server(server, {
 
 app.set("io", io);
 
+// Socket auth middleware
+io.use(async (socket, next) => {
+  try {
+    const token = socket.handshake.auth.token;
+    if (!token) {
+      return next(new Error("Authentication error"));
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret");
+    const User = (await import("./models/User.js")).default;
+    const user = await User.findById(decoded.id).select("-password");
+    if (!user) {
+      return next(new Error("Authentication error"));
+    }
+    socket.user = user;
+    next();
+  } catch (error) {
+    next(new Error("Authentication error"));
+  }
+});
+
 io.on("connection", (socket) => {
-  console.log("Client connected:", socket.id);
+  console.log("Client connected:", socket.id, "User:", socket.user.username);
 
   // 1) Handle the postQuestion event
   socket.on("postQuestion", async (data) => {
     try {
+      if (socket.user.role !== "student") {
+        socket.emit("error", { message: "Only students can post questions" });
+        return;
+      }
       console.log("Received postQuestion:", data);
       const { roomId, question } = data;
-      if (!roomId || !question) {
+      if (!roomId || !question || !question.trim()) {
         socket.emit("error", { message: "Room ID and question are required" });
         return;
       }
@@ -57,16 +82,26 @@ io.on("connection", (socket) => {
         return;
       }
 
-      // 2) create a new question
-      const newQuestion = new Question({ roomId, question });
+      // 2) prevent duplicate in room
+      const existing = await Question.findOne({
+        text: question.trim(),
+        roomId,
+      });
+      if (existing) {
+        socket.emit("error", { message: "Duplicate question in this room" });
+        return;
+      }
+
+      // 3) create a new question
+      const newQuestion = new Question({
+        roomId,
+        text: question.trim(),
+        author: socket.user.username,
+      });
       await newQuestion.save();
 
-      // 3) emit the new question to all connected clients
+      // 4) emit the new question to all connected clients
       io.emit("questionPosted", newQuestion);
-
-      // 4) emit the new question to the sender
-      socket.emit("questionPosted", newQuestion);
-      io.emit("questionPosted", data);
     } catch (error) {
       console.error("Error posting question:", error);
       socket.emit("error", { message: "Failed to post question" });
@@ -75,6 +110,10 @@ io.on("connection", (socket) => {
 
   // 2) Handle the manageQuestion event
   socket.on("manageQuestion", async (data) => {
+    if (socket.user.role !== "faculty") {
+      socket.emit("error", { message: "Only faculty can manage questions" });
+      return;
+    }
     const { roomId, questionId, status, answer, priority } = data;
     const Question = (await import("./models/Question.js")).default;
     try {
