@@ -13,7 +13,7 @@ import { authorize } from "../middleware/role.js";
 const router = express.Router();
 
 router.post("/", protect, authorize("student"), createQuestion);
-router.get("/", protect, authorize("faculty", "ta"), getQuestions);
+router.get("/", protect, authorize("faculty", "ta", "student"), getQuestions);
 router.patch("/:id", protect, authorize("faculty"), updateQuestion);
 router.delete("/", protect, authorize("faculty"), clearQuestions);
 router.patch("/:id/answer", protect, authorize("faculty"), addAnswer);
