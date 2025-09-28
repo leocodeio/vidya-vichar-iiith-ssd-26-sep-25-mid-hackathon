@@ -1,13 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "./ui/button";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+import Header from "./common/header";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -27,44 +21,6 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
-      {/* Header */}
-      <header className="flex justify-between items-center px-6 py-4 border-b">
-       <h1 className="text-2xl font-extrabold tracking-wide text-black">
-  VidyaVichar
-</h1>
-
-        <div className="flex items-center gap-4">
-          {user ? (
-            <>
-              <Button variant="outline" size="sm" onClick={logout}>
-                Logout
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <Avatar>
-                    <AvatarFallback>
-                      {user.username[0].toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>Welcome, {user.username}!</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
-          ) : (
-            <>
-              <Button variant="outline" size="sm" onClick={() => navigate("/login")}>
-                Login
-              </Button>
-              <Button size="sm" onClick={() => navigate("/signup")}>
-                Sign Up
-              </Button>
-            </>
-          )}
-        </div>
-      </header>
-
       {/* Hero Section */}
       <main className="flex flex-1 items-center justify-center px-6 text-center">
         <div className="max-w-xl flex flex-col gap-6">
