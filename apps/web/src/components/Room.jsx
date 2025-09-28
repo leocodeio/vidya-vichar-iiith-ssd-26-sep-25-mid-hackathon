@@ -22,13 +22,14 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Menu, Grid, List } from "lucide-react";
+import { Menu, Grid, List, Copy, Check } from "lucide-react";
 
 const SOCKET_URL = "http://localhost:3001";
 
 export default function Room() {
   const navigate = useNavigate();
   const { roomId } = useParams();
+  const [copied, setCopied] = useState(false);
   const { user, loading: authLoading } = useAuth();
   const [questions, setQuestions] = useState([]);
   const [socket, setSocket] = useState(null);
@@ -138,7 +139,23 @@ export default function Room() {
 
   const SidebarContent = () => (
     <div className="p-4 space-y-4">
-      <h1 className="text-2xl font-bold mb-4">Room: {roomId}</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        Room: {roomId}{" "}
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(roomId);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          }}
+          className="ml-2 p-1 text-black rounded "
+        >
+          {copied ? (
+            <Check className="w-4 h-4 text-green-500" />
+          ) : (
+            <Copy className="w-4 h-4" />
+          )}
+        </button>
+      </h1>
 
       {user.role === "student" && (
         <div>
