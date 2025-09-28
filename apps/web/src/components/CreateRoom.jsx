@@ -1,12 +1,83 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { createRoom as apiCreateRoom } from "../api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 export default function CreateRoom() {
+  const [roomName, setRoomName] = useState("");
+  const [roomId, setRoomId] = useState("");
+  const [open, setOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleCreate = async () => {
+    if (!user || user.role !== "faculty") {
+      alert("Only faculty can create rooms");
+      return;
+    }
+    try {
+      const data = await apiCreateRoom({
+        roomName,
+        creatorName: user.username,
+      });
+      setRoomId(data.roomId);
+      setOpen(true);
+    } catch (error) {
+      alert("Failed to create room");
+    }
+  };
+
+  const handleContinue = () => {
+    navigate(`/room/${roomId}`);
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(roomId);
+    alert("Room ID copied!");
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white border-2 border-gray-800 px-16 py-20 text-center">
-        <h1 className="text-3xl font-normal text-gray-800 mb-8">Create Room</h1>
-        <p className="text-gray-600">
-          Create room functionality coming soon...
-        </p>
-      </div>
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Create Room</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Input
+            placeholder="Room Name"
+            value={roomName}
+            onChange={(e) => setRoomName(e.target.value)}
+          />
+          <Button onClick={handleCreate} className="w-full">
+            Create Room
+          </Button>
+        </CardContent>
+      </Card>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Room Created</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p>Room ID: {roomId}</p>
+            <Button onClick={copyToClipboard} variant="outline">
+              Copy Room ID
+            </Button>
+            <Button onClick={handleContinue}>Continue to Room</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

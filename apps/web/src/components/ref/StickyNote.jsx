@@ -52,7 +52,7 @@
 //   );
 // }
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export default function StickyNote({ q, onUpdate, onDelete }) {
   const [answer, setAnswer] = useState(q.answer || "");
@@ -60,21 +60,29 @@ export default function StickyNote({ q, onUpdate, onDelete }) {
   const markStatus = (status) => onUpdate(q._id, { status });
 
   const saveAnswer = () => {
-    if(answer.trim()) onUpdate(q._id, { answer: answer.trim() });
+    if (answer.trim()) onUpdate(q._id, { answer: answer.trim() });
   };
   const handleDeleteAnswer = async (id) => {
-  await fetch(`/api/questions/${id}/delete-answer`, { method: 'PATCH' });
-  // Optionally update local state for instant feedback
+    await fetch(`/api/questions/${id}/delete-answer`, { method: "PATCH" });
+    // Optionally update local state for instant feedback
   };
 
   return (
     <div className={`stickynote ${q.status}`}>
       <div className="note-text">{q.text}</div>
       <div className="note-meta">
-        <div className="author-time">{q.author} · {new Date(q.createdAt).toLocaleTimeString()}</div>
+        <div className="author-time">
+          {q.author} · {new Date(q.createdAt).toLocaleTimeString()}
+        </div>
         <div className="controls">
-          {q.status !== 'answered' && <button onClick={()=>markStatus('answered')}>Mark Answered</button>}
-          {q.status !== 'important' && <button onClick={()=>markStatus('important')}>Important</button>}
+          {q.status !== "addressed" && (
+            <button onClick={() => markStatus("addressed")}>
+              Mark Addressed
+            </button>
+          )}
+          {q.status !== "important" && (
+            <button onClick={() => markStatus("important")}>Important</button>
+          )}
           <button onClick={() => onDelete(q._id)}>Delete</button>
         </div>
 
@@ -82,16 +90,22 @@ export default function StickyNote({ q, onUpdate, onDelete }) {
           <textarea
             placeholder="Write an answer..."
             value={answer}
-            onChange={(e)=>setAnswer(e.target.value)}
+            onChange={(e) => setAnswer(e.target.value)}
             rows={2}
           />
           <button onClick={saveAnswer}>Save Answer</button>
           {q.answer && (
-            <button onClick={() => handleDeleteAnswer(q._id)}>Delete Answer</button>
+            <button onClick={() => handleDeleteAnswer(q._id)}>
+              Delete Answer
+            </button>
           )}
         </div>
 
-        {q.answer && <div className="saved-answer"><strong>Answer:</strong> {q.answer}</div>}
+        {q.answer && (
+          <div className="saved-answer">
+            <strong>Answer:</strong> {q.answer}
+          </div>
+        )}
       </div>
     </div>
   );
