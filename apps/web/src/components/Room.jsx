@@ -21,7 +21,6 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { Menu, Grid, List } from "lucide-react";
 
@@ -210,69 +209,68 @@ export default function Room() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-200">
-      <div className="flex">
-        {/* Desktop Sidebar - Hidden on mobile */}
-        <div className="hidden lg:block w-80 min-h-screen bg-white shadow-lg">
+      {/* Collapsible Sidebar for All Screen Sizes */}
+      <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+        <SheetContent side="left" className="w-80 sm:w-96">
+          <SheetHeader>
+            <SheetTitle>Room Controls</SheetTitle>
+            <SheetDescription>
+              Manage questions and filters for Room {roomId}
+            </SheetDescription>
+          </SheetHeader>
           <SidebarContent />
+        </SheetContent>
+      </Sheet>
+
+      {/* Main Content */}
+      <div className="flex-1 p-4">
+        {/* Header with Hamburger Menu, Back Button and View Toggle */}
+        <div className="flex justify-between items-center mb-6">
+          {/* Left side - Hamburger Menu */}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setSidebarOpen(true)}
+            className="flex-shrink-0"
+            title="Open Menu"
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
+
+          {/* Center - Back Button */}
+          <Button variant="outline" onClick={() => navigate("/")}>
+            ← Back to Home
+          </Button>
+
+          {/* Right side - View Toggle */}
+          <div className="flex gap-2 flex-shrink-0">
+            <Button
+              variant={viewType === "grid" ? "default" : "outline"}
+              size="icon"
+              onClick={() => setViewType("grid")}
+              title="Grid View"
+            >
+              <Grid className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewType === "list" ? "default" : "outline"}
+              size="icon"
+              onClick={() => setViewType("list")}
+              title="List View"
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        {/* Mobile Sheet Sidebar */}
-        <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-          <div className="lg:hidden">
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="fixed top-4 left-4 z-40"
-              >
-                <Menu className="h-4 w-4" />
-              </Button>
-            </SheetTrigger>
-          </div>
-          <SheetContent side="left" className="w-80">
-            <SheetHeader>
-              <SheetTitle>Controls</SheetTitle>
-              <SheetDescription>Manage questions and filters</SheetDescription>
-            </SheetHeader>
-            <SidebarContent />
-          </SheetContent>
-        </Sheet>
-
-        {/* Main Content */}
-        <div className="flex-1 p-4 lg:pl-0">
-          {/* Header with Back Button and View Toggle */}
-          <div className="flex justify-between items-center mb-6">
-            <div className="lg:hidden" /> {/* Spacer for mobile menu button */}
-            <Button variant="outline" onClick={() => navigate("/")}>
-              ← Back to Home
-            </Button>
-            <div className="flex gap-2">
-              <Button
-                variant={viewType === "grid" ? "default" : "outline"}
-                size="icon"
-                onClick={() => setViewType("grid")}
-              >
-                <Grid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewType === "list" ? "default" : "outline"}
-                size="icon"
-                onClick={() => setViewType("list")}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Questions Board */}
-          <div className="max-h-[calc(100vh-8rem)] overflow-y-auto">
-            <StickyBoard
-              questions={filteredQuestions}
-              onUpdate={handleUpdateQuestion}
-              userRole={user.role}
-              viewType={viewType}
-            />
-          </div>
+        {/* Questions Board */}
+        <div className="max-h-[calc(100vh-8rem)] overflow-y-auto">
+          <StickyBoard
+            questions={filteredQuestions}
+            onUpdate={handleUpdateQuestion}
+            userRole={user.role}
+            viewType={viewType}
+          />
         </div>
       </div>
     </div>
