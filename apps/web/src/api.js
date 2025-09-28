@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api";
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api";
 const QUESTIONS = `${API_BASE}/questions`;
 const AUTH = `${API_BASE}/auth`;
 const ROOMS = `${API_BASE}/rooms`;
@@ -8,9 +9,9 @@ const ROOMS = `${API_BASE}/rooms`;
 // Configure axios to send cookies
 axios.defaults.withCredentials = true;
 
-export const fetchQuestions = (status) =>
+export const fetchQuestions = (roomId) =>
   axios
-    .get(QUESTIONS, { params: status ? { status } : {} })
+    .get(QUESTIONS, { params: roomId ? { roomId } : {} })
     .then((r) => r.data);
 
 export const postQuestion = (payload) =>
@@ -47,6 +48,6 @@ export const getMe = () => axios.get(`${AUTH}/me`).then((r) => r.data);
 export const createRoom = (data) =>
   axios.post(`${ROOMS}/create`, data).then((r) => r.data);
 export const joinRoom = (data) =>
-  axios.post(`${ROOMS}/join`, data).then((r) => r.data);
+  axios.post(`${ROOMS}/join?roomId=${data.roomId}`, data).then((r) => r.data);
 export const showRoom = (roomId) =>
   axios.get(`${ROOMS}/show`, { params: { roomId } }).then((r) => r.data);

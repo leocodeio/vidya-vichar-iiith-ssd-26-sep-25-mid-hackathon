@@ -54,7 +54,7 @@
 
 import React, { useState } from "react";
 
-export default function StickyNote({ q, onUpdate, onDelete }) {
+export default function StickyNote({ q, onUpdate, onDelete, userRole }) {
   const [answer, setAnswer] = useState(q.answer || "");
 
   const markStatus = (status) => onUpdate(q._id, { status });
@@ -74,32 +74,38 @@ export default function StickyNote({ q, onUpdate, onDelete }) {
         <div className="author-time">
           {q.author} · {new Date(q.createdAt).toLocaleTimeString()}
         </div>
-        <div className="controls">
-          {q.status !== "addressed" && (
-            <button onClick={() => markStatus("addressed")}>
-              Mark Addressed
-            </button>
-          )}
-          {q.status !== "important" && (
-            <button onClick={() => markStatus("important")}>Important</button>
-          )}
-          <button onClick={() => onDelete(q._id)}>Delete</button>
-        </div>
+        {userRole === "faculty" && (
+          <>
+            <div className="controls">
+              {q.status !== "addressed" && (
+                <button onClick={() => markStatus("addressed")}>
+                  Mark Addressed
+                </button>
+              )}
+              {q.status !== "important" && (
+                <button onClick={() => markStatus("important")}>
+                  Important
+                </button>
+              )}
+              <button onClick={() => onDelete(q._id)}>Delete</button>
+            </div>
 
-        <div className="answer-section">
-          <textarea
-            placeholder="Write an answer..."
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            rows={2}
-          />
-          <button onClick={saveAnswer}>Save Answer</button>
-          {q.answer && (
-            <button onClick={() => handleDeleteAnswer(q._id)}>
-              Delete Answer
-            </button>
-          )}
-        </div>
+            <div className="answer-section">
+              <textarea
+                placeholder="Write an answer..."
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                rows={2}
+              />
+              <button onClick={saveAnswer}>Save Answer</button>
+              {q.answer && (
+                <button onClick={() => handleDeleteAnswer(q._id)}>
+                  Delete Answer
+                </button>
+              )}
+            </div>
+          </>
+        )}
 
         {q.answer && (
           <div className="saved-answer">

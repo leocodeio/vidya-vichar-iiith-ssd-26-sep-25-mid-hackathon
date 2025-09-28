@@ -31,7 +31,11 @@ app.get("/", (req, res) => res.send("VidyaVichar API running"));
 
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: "http://localhost:5174", methods: ["GET", "POST"] },
+  cors: {
+    origin: "http://localhost:5173", // The front-end URL (adjust this based on your actual client URL)
+    methods: ["GET", "POST"], // Allowed HTTP methods
+    credentials: true, // Allow cookies to be sent across domains
+  },
 });
 
 app.set("io", io);
@@ -39,6 +43,7 @@ app.set("io", io);
 // Socket auth middleware
 io.use(async (socket, next) => {
   try {
+    console.log(socket.handshake.auth); // Log to verify token is received
     const token = socket.handshake.auth.token;
     if (!token) {
       return next(new Error("Authentication error"));
@@ -57,7 +62,7 @@ io.use(async (socket, next) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("Client connected:", socket.id, "User:", socket.user.username);
+  console.log("Client connected:", socket.id, "User:");
 
   // 1) Handle the postQuestion event
   socket.on("postQuestion", async (data) => {

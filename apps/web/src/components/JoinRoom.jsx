@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function JoinRoom() {
   const [roomId, setRoomId] = useState("");
-  const [name, setName] = useState("");
+  const [error, setError] = useState("");
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -17,11 +17,12 @@ export default function JoinRoom() {
       navigate("/login");
       return;
     }
+    setError("");
     try {
       await apiJoinRoom({ roomId, name: user.username });
       navigate(`/room/${roomId}`);
-    } catch (error) {
-      alert("Failed to join room");
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to join room");
     }
   };
 
@@ -37,6 +38,7 @@ export default function JoinRoom() {
             value={roomId}
             onChange={(e) => setRoomId(e.target.value)}
           />
+          {error && <p className="text-red-500">{error}</p>}
           <Button onClick={handleJoin} className="w-full">
             Join Room
           </Button>
