@@ -11,11 +11,10 @@ import "./App.css";
 import Header from "./components/common/header";
 
 export default function App() {
-  
   return (
-    <AuthProvider>
-      <Router>
-      <Header/>
+    <Router>
+      <AuthProvider>
+        <Header />
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
@@ -25,7 +24,7 @@ export default function App() {
           <Route path="/room/:roomId" element={<Room />} />
           <Route path="/inspect-qa" element={<InspectQA />} />
         </Routes>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }
