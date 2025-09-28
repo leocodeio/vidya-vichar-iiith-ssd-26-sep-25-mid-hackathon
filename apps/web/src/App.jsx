@@ -8,11 +8,13 @@ import Signup from "./components/Signup";
 import Room from "./components/Room";
 import InspectQA from "./components/InspectQA";
 import "./App.css";
+import Header from "./components/common/header";
 
 export default function App() {
   
   return (
     <AuthProvider>
+      <Header/>
       <Router>
         <Routes>
           <Route path="/" element={<Landing />} />
