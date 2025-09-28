@@ -127,20 +127,19 @@ export default function Room() {
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-200 p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center gap-4 mb-4">
-          <Button variant="outline" onClick={() => navigate("/")}>
-            ← Back to Home
-          </Button>
-          <h1 className="text-2xl font-bold">Room: {roomId}</h1>
-        </div>
+  <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-200 p-4">
+    <div className="max-w-6xl mx-auto flex gap-6">
+      {/* Left Panel */}
+      <div className="w-1/3 sticky top-4 self-start space-y-4">
+        <h1 className="text-2xl font-bold mb-4">Room: {roomId}</h1>
+
         {user.role === "student" && (
-          <div className="mb-4">
+          <div>
             <NewQuestionForm onAdd={handleAddQuestion} />
           </div>
         )}
-        <div className="mb-4 flex gap-4">
+
+        <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Status:</label>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -155,6 +154,7 @@ export default function Room() {
               </SelectContent>
             </Select>
           </div>
+
           <div>
             <label className="block text-sm font-medium mb-1">Priority:</label>
             <Select value={priorityFilter} onValueChange={setPriorityFilter}>
@@ -168,6 +168,7 @@ export default function Room() {
               </SelectContent>
             </Select>
           </div>
+
           <Button
             onClick={() => {
               setStatusFilter("");
@@ -177,6 +178,7 @@ export default function Room() {
           >
             Clear Filters
           </Button>
+
           {user.role === "faculty" && (
             <Button
               onClick={async () => {
@@ -193,12 +195,28 @@ export default function Room() {
             </Button>
           )}
         </div>
-        <StickyBoard
-          questions={filteredQuestions}
-          onUpdate={handleUpdateQuestion}
-          userRole={user.role}
-        />
+      </div>
+
+      {/* Right Panel */}
+      <div className="w-2/3 relative">
+        {/* Back to Home button top-right */}
+        <div className="absolute right-0 top-0 mb-2">
+          <Button variant="outline" onClick={() => navigate("/")}>
+            ← Back to Home
+          </Button>
+        </div>
+
+        <div className="mt-12 max-h-[calc(100vh-2rem)] overflow-y-auto pr-2 space-y-4">
+          <StickyBoard
+            questions={filteredQuestions}
+            onUpdate={handleUpdateQuestion}
+            userRole={user.role}
+            uniformBox={true} // pass prop to force same size boxes
+          />
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
+
 }
