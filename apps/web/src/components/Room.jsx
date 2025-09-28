@@ -51,6 +51,8 @@ export default function Room() {
       newSocket.on("connect", () => console.log("Connected to socket"));
       newSocket.on("error", (msg) => alert(`Socket error: ${msg.message}`));
       newSocket.on("questionPosted", (question) => {
+        console.log("questionPosted", question);
+        console.log("questions", questions);
         setQuestions((prev) => [question, ...prev]);
       });
       newSocket.on("questionUpdated", ({ question }) => {

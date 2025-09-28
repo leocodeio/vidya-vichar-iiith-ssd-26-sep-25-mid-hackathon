@@ -71,14 +71,12 @@ io.on("connection", (socket) => {
         socket.emit("error", { message: "Only students can post questions" });
         return;
       }
-      console.log("Received postQuestion:", data);
       const { roomId, question } = data;
       if (!roomId || !question || !question.trim()) {
         socket.emit("error", { message: "Room ID and question are required" });
         return;
       }
-      const Question = (await import("./models/Question.js")).default;
-
+      
       // 1) check if roomId is valid
       const Room = (await import("./models/Room.js")).default;
       const room = await Room.findOne({ roomId });
@@ -86,8 +84,9 @@ io.on("connection", (socket) => {
         socket.emit("error", { message: "Room not found" });
         return;
       }
-
+      
       // 2) prevent duplicate in room
+      const Question = (await import("./models/Question.js")).default;
       const existing = await Question.findOne({
         text: question.trim(),
         roomId,
