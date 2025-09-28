@@ -10,7 +10,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -22,6 +21,10 @@ export default function CreateRoom() {
   const navigate = useNavigate();
 
   const handleCreate = async () => {
+    if (!roomName.trim()) {
+      toast.error("Room name cannot be empty");
+      return;
+    }
     if (!user || user.role !== "faculty") {
       toast.error("Only faculty can create rooms");
       return;
@@ -61,9 +64,18 @@ export default function CreateRoom() {
             value={roomName}
             onChange={(e) => setRoomName(e.target.value)}
           />
-          <Button onClick={handleCreate} className="w-full">
-            Create Room
-          </Button>
+          <div className="flex w-full gap-2">
+            <Button
+              onClick={() => navigate(-1)}
+              variant="outline"
+              className="flex-1"
+            >
+              Back
+            </Button>
+            <Button onClick={handleCreate} className="flex-1">
+              Create Room
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -73,11 +85,18 @@ export default function CreateRoom() {
             <DialogTitle>Room Created</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p>Room ID: {roomId}</p>
-            <Button onClick={copyToClipboard} variant="outline">
-              Copy Room ID
-            </Button>
-            <Button onClick={handleContinue}>Continue to Room</Button>
+            <p>Your Room ID is:</p>
+            <div className="p-2 bg-slate-100 rounded font-mono text-center">
+              {roomId}
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={copyToClipboard} variant="outline" className="flex-1">
+                Copy ID
+              </Button>
+              <Button onClick={handleContinue} className="flex-1">
+                Continue to Room
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

@@ -13,11 +13,14 @@ export default function JoinRoom() {
   const navigate = useNavigate();
 
   const handleJoin = async () => {
+    if (!roomId.trim()) {
+      toast.error("Please enter a Room ID");
+      return;
+    }
     if (!user) {
       navigate("/login");
       return;
     }
-    console.log(roomId, user);
     try {
       await apiJoinRoom({
         roomId,
@@ -39,13 +42,24 @@ export default function JoinRoom() {
         </CardHeader>
         <CardContent className="space-y-4">
           <Input
-            placeholder="Room ID"
+            placeholder="Enter Room ID"
             value={roomId}
             onChange={(e) => setRoomId(e.target.value)}
           />
-          <Button onClick={handleJoin} className="w-full">
-            Join Room
-          </Button>
+          {/* --- START: UPDATED CODE --- */}
+          <div className="flex w-full gap-2">
+            <Button
+              onClick={() => navigate(-1)}
+              variant="outline"
+              className="flex-1"
+            >
+              Back
+            </Button>
+            <Button onClick={handleJoin} className="flex-1">
+              Join Room
+            </Button>
+          </div>
+          {/* --- END: UPDATED CODE --- */}
         </CardContent>
       </Card>
     </div>
