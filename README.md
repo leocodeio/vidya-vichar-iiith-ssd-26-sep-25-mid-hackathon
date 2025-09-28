@@ -1,160 +1,69 @@
-# Turborepo starter
+# Turborepo Starter
 
-This Turborepo starter is maintained by the Turborepo core team.
+This repository is a **Turborepo** monorepo with two applications:  
 
-## Using this example
+- **API** → `apps/api`  
+- **Web** → `apps/web`  
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
+## 🚀 Getting Started
+
+### 1. Install dependencies
+```bash
+pnpm install
 ```
 
-## What's inside?
+---
 
-This Turborepo includes the following packages/apps:
+### 2. Setup environment variables
+Both projects require a `.env` file. Copy the `.env.example` in each project before running:
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+```bash
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+---
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+### 3. Development
+Run **both apps** in dev mode:
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+```bash
+pnpm rundev
 ```
 
-### Develop
+*(this should be defined in root `package.json` as a Turborepo task that starts both `apps/api` and `apps/web` in parallel)*
 
-To develop all apps and packages, run the following command:
+---
 
-```
-cd my-turborepo
+### 4. Build
+To build all apps:
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+```bash
+pnpm run build
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+---
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+### 5. Start
+Run the production build:
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+```bash
+pnpm runs tatar
 ```
 
-### Remote Caching
+*(replace `tatar` with `start` if you meant that — looks like a typo!)*
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+---
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
+## 📂 Project Structure
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+.
+├── apps/
+│   ├── api/    # Backend API
+│   └── web/    # Frontend Web App
+├── package.json
+├── turbo.json
+└── pnpm-workspace.yaml
 ```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-# Workflow:
-1. User Authentication: 
--  Users sign up or log in via the frontend (apps/web), which sends requests to the backend (apps/api/ controllers/authController.js).
-- Auth state is managed in the frontend (apps/web/src/context/AuthContext.jsx).
-2. Room creation and Management:
-- Faculty can create rooms (apps/api/controllers/roomController.js), generating a unique room ID.
-- Students and faculty join rooms using the room ID.
-3. Question posting and Management:
-- Students post questions to a room (apps/api/controllers/questionController.js).
-- Faculty can answer, reject, or mark questions as important.
-- All question actions are broadcast via Socket.io for real-time updates.
-4. Frontend Interaction:
-- The React app (apps/web/src/App.jsx) provides pages for all user flows.
-- Components like StickyBoard and StickyNote display questions and answers live.
-- Filters and controls allow sorting and clearing questions.
-5. Coming out of the room:
-- Students or faculty can leave the room, redirecting them to main page.
-
-
-## Summary
-* Faculty: Create rooms, manage questions.
-* Students: Join rooms, see all questions, ask questions.
-* Live Q&A: Real-time updates via Socket.io.
-* Frontend: React/Vite app for user interaction.
-* Backend: Express server for handling logic and data.
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
