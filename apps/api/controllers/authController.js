@@ -91,4 +91,4 @@ export const getMe = async (req, res) => {
     username: req.user.username,
     role: req.user.role,
   });
-};
+}; 
