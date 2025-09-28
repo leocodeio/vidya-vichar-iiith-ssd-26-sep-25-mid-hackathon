@@ -14,8 +14,8 @@ export default function App() {
   
   return (
     <AuthProvider>
-      <Header/>
       <Router>
+      <Header/>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />

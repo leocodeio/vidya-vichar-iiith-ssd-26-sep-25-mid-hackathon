@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "./ui/button";
-import Header from "./common/header";
+
 
 export default function Landing() {
   const navigate = useNavigate();
-  const { user, logout, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) return <div>Loading...</div>;
 
