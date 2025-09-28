@@ -16,32 +16,24 @@ export default function Landing() {
   if (loading) return <div>Loading...</div>;
 
   const handleCreateRoom = () => {
-    if (!user) {
-      navigate("/login");
-    } else {
-      navigate("/create-room");
-    }
+    if (!user) navigate("/login");
+    else navigate("/create-room");
   };
 
   const handleJoinRoom = () => {
-    if (!user) {
-      navigate("/login");
-    } else {
-      navigate("/join-room");
-    }
+    if (!user) navigate("/login");
+    else navigate("/join-room");
   };
 
-  const lastRoomId = localStorage.getItem("lastRoomId");
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 font-sans">
+    <div className="min-h-screen flex flex-col bg-white text-gray-900">
       {/* Header */}
-      <header className="flex justify-between items-center p-4">
-        <div></div>
+      <header className="flex justify-between items-center px-6 py-4 border-b">
+        <h1 className="text-lg font-semibold tracking-wide">vidya vichar</h1>
         <div className="flex items-center gap-4">
           {user ? (
             <>
-              <Button variant="outline" onClick={logout}>
+              <Button variant="outline" size="sm" onClick={logout}>
                 Logout
               </Button>
               <DropdownMenu>
@@ -59,55 +51,53 @@ export default function Landing() {
             </>
           ) : (
             <>
-              <Button variant="outline" onClick={() => navigate("/login")}>
+              <Button variant="outline" size="sm" onClick={() => navigate("/login")}>
                 Login
               </Button>
-              <Button onClick={() => navigate("/signup")}>Sign Up</Button>
+              <Button size="sm" onClick={() => navigate("/signup")}>
+                Sign Up
+              </Button>
             </>
           )}
         </div>
       </header>
 
-      {/* Hero */}
-      <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
-        <div className="bg-white border-2 border-gray-800 px-16 py-20 text-center min-w-[500px] min-h-[300px] flex flex-col justify-center items-center gap-12 fade-in">
-          <h1 className="text-3xl font-normal text-gray-800 m-0 tracking-wide">
-            vidya vichar
-          </h1>
-          <div className="flex gap-8 justify-center">
-            {/* Student + Faculty can create/join */}
+      {/* Hero Section */}
+      <main className="flex flex-1 items-center justify-center px-6 text-center">
+        <div className="max-w-xl flex flex-col gap-6">
+          <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+            Stay connected. Learn together.
+          </h2>
+          <p className="text-gray-600">
+            A collaborative platform where students, TAs, and faculty come together 
+            to create rooms, share knowledge, and inspect discussions.
+          </p>
+
+          {/* Role-based actions */}
+          <div className="flex flex-wrap justify-center gap-4 mt-4">
             {(user?.role === "student" || user?.role === "faculty") && (
               <>
-                <Button
-                  variant="outline"
-                  onClick={handleCreateRoom}
-                  className="px-6 py-3 text-base"
-                >
-                  create room
+                <Button variant="default" onClick={handleCreateRoom}>
+                  Create Room
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleJoinRoom}
-                  className="px-6 py-3 text-base"
-                >
-                  join room
+                <Button variant="outline" onClick={handleJoinRoom}>
+                  Join Room
                 </Button>
               </>
             )}
-
-            {/* TA + Faculty can inspect */}
             {(user?.role === "ta" || user?.role === "faculty") && (
-              <Button
-                variant="outline"
-                onClick={() => navigate("/inspect-qa")}
-                className="px-6 py-3 text-base"
-              >
-                inspect q/a
+              <Button variant="secondary" onClick={() => navigate("/inspect-qa")}>
+                Inspect Q/A
               </Button>
             )}
           </div>
         </div>
-      </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="py-4 text-center text-sm text-gray-500 border-t">
+        © {new Date().getFullYear()} Vidya Vichar. All rights reserved.
+      </footer>
     </div>
   );
 }
