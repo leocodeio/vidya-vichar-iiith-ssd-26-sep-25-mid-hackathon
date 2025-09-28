@@ -8,6 +8,7 @@ import connectDB from "./config/db.js";
 import questionsRouter from "./routes/questions.js";
 import roomsRouter from "./routes/rooms.js";
 import authRouter from "./routes/auth.js";
+import { protect } from "./middleware/auth.js";
 
 dotenv.config();
 const app = express();
@@ -21,8 +22,8 @@ const MONGODB_URI =
 
 await connectDB(MONGODB_URI);
 
-app.use("/api/questions", questionsRouter);
-app.use("/api/rooms", roomsRouter);
+app.use("/api/questions",protect, questionsRouter);
+app.use("/api/rooms",protect, roomsRouter);
 app.use("/api/auth", authRouter);
 
 app.get("/", (req, res) => res.send("VidyaVichar API running"));
@@ -39,30 +40,37 @@ io.on("connection", (socket) => {
 
   // 1) Handle the postQuestion event
   socket.on("postQuestion", async (data) => {
-    console.log("Received postQuestion:", data);
-    const { roomId, question } = data;
-    if (!roomId || !question) {
-      socket.emit("error", { message: "Room ID and question are required" });
+    try {
+      console.log("Received postQuestion:", data);
+      const { roomId, question } = data;
+      if (!roomId || !question) {
+        socket.emit("error", { message: "Room ID and question are required" });
+        return;
+      }
+      const Question = (await import("./models/Question.js")).default;
+
+      // 1) check if roomId is valid
+      const Room = (await import("./models/Room.js")).default;
+      const room = await Room.findOne({ roomId });
+      if (!room) {
+        socket.emit("error", { message: "Room not found" });
+        return;
+      }
+
+      // 2) create a new question
+      const newQuestion = new Question({ roomId, question });
+      await newQuestion.save();
+
+      // 3) emit the new question to all connected clients
+      io.emit("questionPosted", newQuestion);
+
+      // 4) emit the new question to the sender
+      socket.emit("questionPosted", newQuestion);
+      io.emit("questionPosted", data);
+    } catch (error) {
+      console.error("Error posting question:", error);
+      socket.emit("error", { message: "Failed to post question" });
     }
-    const Question = (await import("./models/Question.js")).default;
-
-    // 1) check if roomId is valid
-    const Room = (await import("./models/Room.js")).default;
-    const room = await Room.findOne({ roomId });
-    if (!room) {
-      socket.emit("error", { message: "Room not found" });
-    }
-
-    // 2) create a new question
-    const newQuestion = new Question({ roomId, question });
-    await newQuestion.save();
-
-    // 3) emit the new question to all connected clients
-    io.emit("newQuestion", newQuestion);
-
-    // 4) emit the new question to the sender
-    socket.emit("questionPosted", newQuestion);
-    io.emit("newQuestion", data);
   });
 
   // 2) Handle the manageQuestion event
