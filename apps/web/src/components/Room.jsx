@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { useAuth } from "../context/AuthContext";
 import { fetchQuestions, clearQuestions, showRoom } from "../api";
+import { toast } from "sonner";
 import StickyBoard from "./ref/StickyBoard";
 import NewQuestionForm from "./ref/NewQuestionForm";
 
@@ -43,11 +44,11 @@ export default function Room() {
         console.log("isUserParticipant", isUserParticipant);
         setIsParticipant(isUserParticipant);
         if (!isUserParticipant) {
-          alert("You must join the room first");
+          toast.error("You must join the room first");
           return;
         }
       } catch (error) {
-        alert("Room not found or access denied");
+        toast.error("Room not found or access denied");
         return;
       }
 
@@ -61,7 +62,9 @@ export default function Room() {
       });
 
       newSocket.on("connect", () => console.log("Connected to socket"));
-      newSocket.on("error", (msg) => alert(`Socket error: ${msg.message}`));
+      newSocket.on("error", (msg) =>
+        toast.error(`Socket error: ${msg.message}`),
+      );
       newSocket.on("questionPosted", (question) => {
         console.log("questionPosted", question);
         console.log("questions", questions);
@@ -124,9 +127,14 @@ export default function Room() {
     );
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-gray-200 p-4">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Room: {roomId}</h1>
+        <div className="flex items-center gap-4 mb-4">
+          <Button variant="outline" onClick={() => navigate("/")}>
+            ← Back to Home
+          </Button>
+          <h1 className="text-2xl font-bold">Room: {roomId}</h1>
+        </div>
         {user.role === "student" && (
           <div className="mb-4">
             <NewQuestionForm onAdd={handleAddQuestion} />
@@ -176,7 +184,7 @@ export default function Room() {
                   await clearQuestions();
                   setQuestions([]);
                 } catch (error) {
-                  console.error("Clear failed");
+                  toast.error("Failed to clear questions");
                 }
               }}
               variant="destructive"

@@ -37,8 +37,8 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-orange-100">
+      <Card className="w-full max-w-md fade-in">
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
         </CardHeader>
@@ -86,6 +86,13 @@ export default function Signup() {
               Login
             </Link>
           </p>
+          <Button
+            variant="outline"
+            onClick={() => navigate("/")}
+            className="w-full mt-4"
+          >
+            Back to Home
+          </Button>
         </CardContent>
       </Card>
     </div>

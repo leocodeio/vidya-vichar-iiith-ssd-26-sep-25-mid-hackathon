@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { createRoom as apiCreateRoom } from "../api";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,7 +23,7 @@ export default function CreateRoom() {
 
   const handleCreate = async () => {
     if (!user || user.role !== "faculty") {
-      alert("Only faculty can create rooms");
+      toast.error("Only faculty can create rooms");
       return;
     }
     try {
@@ -32,9 +33,10 @@ export default function CreateRoom() {
         creatorId: user._id,
       });
       setRoomId(data.roomId);
+      localStorage.setItem("lastRoomId", data.roomId);
       setOpen(true);
     } catch (error) {
-      alert("Failed to create room");
+      toast.error("Failed to create room");
     }
   };
 
@@ -44,12 +46,12 @@ export default function CreateRoom() {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(roomId);
-    alert("Room ID copied!");
+    toast.success("Room ID copied!");
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-cyan-100 flex items-center justify-center">
+      <Card className="w-full max-w-md fade-in">
         <CardHeader>
           <CardTitle>Create Room</CardTitle>
         </CardHeader>

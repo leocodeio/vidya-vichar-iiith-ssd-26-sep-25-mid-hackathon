@@ -31,8 +31,10 @@ export default function Landing() {
     }
   };
 
+  const lastRoomId = localStorage.getItem("lastRoomId");
+
   return (
-    <div className="min-h-screen bg-gray-100 font-sans">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-100 font-sans">
       {/* Header */}
       <header className="flex justify-between items-center p-4">
         <div></div>
@@ -68,25 +70,35 @@ export default function Landing() {
 
       {/* Hero */}
       <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
-        <div className="bg-white border-2 border-gray-800 px-16 py-20 text-center min-w-[500px] min-h-[300px] flex flex-col justify-center items-center gap-12">
+        <div className="bg-white border-2 border-gray-800 px-16 py-20 text-center min-w-[500px] min-h-[300px] flex flex-col justify-center items-center gap-12 fade-in">
           <h1 className="text-3xl font-normal text-gray-800 m-0 tracking-wide">
             vidya vichar
           </h1>
-          <div className="flex gap-8 justify-center">
-            <Button
-              variant="outline"
-              onClick={handleCreateRoom}
-              className="px-6 py-3 text-base"
-            >
-              create room
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleJoinRoom}
-              className="px-6 py-3 text-base"
-            >
-              join room
-            </Button>
+          <div className="flex flex-col gap-4">
+            {user && lastRoomId && (
+              <Button
+                onClick={() => navigate(`/room/${lastRoomId}`)}
+                className="px-6 py-3 text-base"
+              >
+                Rejoin Last Room ({lastRoomId})
+              </Button>
+            )}
+            <div className="flex gap-8 justify-center">
+              <Button
+                variant="outline"
+                onClick={handleCreateRoom}
+                className="px-6 py-3 text-base"
+              >
+                create room
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleJoinRoom}
+                className="px-6 py-3 text-base"
+              >
+                join room
+              </Button>
+            </div>
           </div>
         </div>
       </div>

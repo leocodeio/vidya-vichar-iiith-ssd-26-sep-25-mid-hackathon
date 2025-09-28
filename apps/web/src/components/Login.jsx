@@ -24,8 +24,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <Card className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-100">
+      <Card className="w-full max-w-md fade-in">
         <CardHeader>
           <CardTitle>Login</CardTitle>
         </CardHeader>
@@ -50,6 +50,13 @@ export default function Login() {
               Login
             </Button>
           </form>
+          <Button
+            variant="outline"
+            onClick={() => navigate("/")}
+            className="w-full mt-4"
+          >
+            Back to Home
+          </Button>
           <p className="mt-4 text-center">
             Don't have an account?{" "}
             <Link to="/signup" className="text-blue-500">

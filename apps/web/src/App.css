@@ -121,7 +121,7 @@
 
 @layer components {
   .stickynote {
-    @apply bg-yellow-100 border-2 border-yellow-400 p-4 m-2 rounded-lg shadow-md min-h-[150px] flex flex-col justify-between;
+    @apply bg-yellow-100 border-2 border-yellow-400 p-4 m-2 rounded-lg shadow-md min-h-[150px] flex flex-col justify-between transition-all duration-300 hover:scale-105 hover:shadow-lg;
   }
   .stickynote.answered {
     @apply bg-green-100 border-green-400;
@@ -182,5 +182,18 @@
   }
   .btn-danger {
     @apply bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600;
+  }
+  .fade-in {
+    animation: fadeIn 0.5s ease-in;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
