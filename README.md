@@ -30,10 +30,8 @@ cp apps/web/.env.example apps/web/.env
 Run **both apps** in dev mode:
 
 ```bash
-pnpm rundev
+pnpm run dev
 ```
-
-*(this should be defined in root `package.json` as a Turborepo task that starts both `apps/api` and `apps/web` in parallel)*
 
 ---
 
@@ -50,10 +48,8 @@ pnpm run build
 Run the production build:
 
 ```bash
-pnpm runs tatar
+pnpm run start
 ```
-
-*(replace `tatar` with `start` if you meant that — looks like a typo!)*
 
 ---
 
