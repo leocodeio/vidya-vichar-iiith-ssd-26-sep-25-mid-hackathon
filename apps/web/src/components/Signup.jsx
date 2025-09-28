@@ -40,7 +40,7 @@ export default function Signup() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-orange-100">
       <Card className="w-full max-w-md fade-in">
         <CardHeader>
-          <CardTitle>Sign Up</CardTitle>
+          <CardTitle>Sign up</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -77,13 +77,13 @@ export default function Signup() {
             </select>
             {error && <p className="text-red-500">{error}</p>}
             <Button type="submit" className="w-full">
-              Sign Up
+              Sign up
             </Button>
           </form>
           <p className="mt-4 text-center">
             Already have an account?{" "}
             <Link to="/login" className="text-blue-500">
-              Login
+              Log in
             </Link>
           </p>
           <Button

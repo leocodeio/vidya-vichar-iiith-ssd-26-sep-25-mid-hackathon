@@ -60,9 +60,9 @@ export default function Landing() {
           ) : (
             <>
               <Button variant="outline" onClick={() => navigate("/login")}>
-                Login
+                Log in
               </Button>
-              <Button onClick={() => navigate("/signup")}>Sign Up</Button>
+              <Button onClick={() => navigate("/signup")}>Sign up</Button>
             </>
           )}
         </div>
@@ -72,7 +72,7 @@ export default function Landing() {
       <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
         <div className="bg-white border-2 border-gray-800 px-16 py-20 text-center min-w-[500px] min-h-[300px] flex flex-col justify-center items-center gap-12 fade-in">
           <h1 className="text-3xl font-normal text-gray-800 m-0 tracking-wide">
-            vidya vichar
+            VidyaVichar
           </h1>
           <div className="flex flex-col gap-4">
             {user && lastRoomId && (
@@ -89,14 +89,14 @@ export default function Landing() {
                 onClick={handleCreateRoom}
                 className="px-6 py-3 text-base"
               >
-                create room
+                Create Room
               </Button>
               <Button
                 variant="outline"
                 onClick={handleJoinRoom}
                 className="px-6 py-3 text-base"
               >
-                join room
+                Join Room
               </Button>
             </div>
           </div>

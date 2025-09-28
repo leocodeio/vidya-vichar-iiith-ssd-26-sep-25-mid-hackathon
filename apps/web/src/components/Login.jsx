@@ -27,7 +27,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-100">
       <Card className="w-full max-w-md fade-in">
         <CardHeader>
-          <CardTitle>Login</CardTitle>
+          <CardTitle>Log in</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -47,7 +47,7 @@ export default function Login() {
             />
             {error && <p className="text-red-500">{error}</p>}
             <Button type="submit" className="w-full">
-              Login
+              Log in
             </Button>
           </form>
           <Button
