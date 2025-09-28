@@ -29,7 +29,10 @@ export default function Landing() {
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
       {/* Header */}
       <header className="flex justify-between items-center px-6 py-4 border-b">
-        <h1 className="text-lg font-semibold tracking-wide">vidya vichar</h1>
+       <h1 className="text-2xl font-extrabold tracking-wide text-black">
+  VidyaVichar
+</h1>
+
         <div className="flex items-center gap-4">
           {user ? (
             <>
@@ -95,9 +98,18 @@ export default function Landing() {
       </main>
 
       {/* Footer */}
-      <footer className="py-4 text-center text-sm text-gray-500 border-t">
-        © {new Date().getFullYear()} Vidya Vichar. All rights reserved.
-      </footer>
+     <footer className="py-6 text-center text-sm text-gray-600 border-t bg-gray-100">
+  <p className="mb-2">
+    Made with ❤️ by{" "}
+    <span className="font-medium text-gray-800">
+      Harsha · Teja · Ankit · Rohit · Krish
+    </span>
+  </p>
+  <p className="text-xs text-gray-500">
+    © {new Date().getFullYear()} Vidya Vichar. All rights reserved.
+  </p>
+</footer>
+
     </div>
   );
 }
