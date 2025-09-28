@@ -1,48 +1,65 @@
-
+// React hooks for managing state and side-effects
 import React, { useEffect, useState } from "react";
+// API functions for fetching and managing questions
 import {
   fetchQuestions,
   postQuestion,
   updateQuestion,
   clearQuestions,
 } from "./api";
+// Components for adding new questions and displaying them
 import NewQuestionForm from "./components/ref/NewQuestionForm";
 import StickyBoard from "./components/ref/StickyBoard";
+// Socket.IO client for real-time updates
 import { io } from "socket.io-client";
+// Filters component to filter questions
 import Filters from "./components/ref/Filters";
 
+// Initialize socket connection to server
 const socket = io("http://localhost:5001");
 
+// Main App component
 export default function App() {
-  const [questions, setQuestions] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [statusFilter, setStatusFilter] = useState(null);
+  // State variables
+  const [questions, setQuestions] = useState([]); // List of questions
+  const [loading, setLoading] = useState(false); // Loading state for data fetch
+  const [error, setError] = useState(""); // Error message
+  const [statusFilter, setStatusFilter] = useState(null); // Filter for question status
 
+  // Function to load questions from API, optionally filtered by status
   const loadQuestions = async (status = null) => {
-    setLoading(true);
-    setError("");
+    setLoading(true); // Show loading spinner
+    setError(""); // Reset previous errors
     try {
-      const qs = await fetchQuestions(status);
-      setQuestions(qs);
+      const qs = await fetchQuestions(status); // Fetch questions from API
+      setQuestions(qs); // Update state with fetched questions
     } catch (err) {
-      setError("Failed to load questions", err);
+      setError("Failed to load questions", err); // Set error if fetch fails
     }
-    setLoading(false);
+    setLoading(false); // Stop loading spinner
   };
 
+  // Effect to reload questions whenever the status filter changes
   useEffect(() => {
     loadQuestions(statusFilter);
   }, [statusFilter]);
 
+  // Effect to handle real-time socket events
   useEffect(() => {
+    // New question posted
     socket.on("newQuestion", (q) => setQuestions((prev) => [q, ...prev]));
+
+    // Existing question updated
     socket.on("updateQuestion", (q) =>
       setQuestions((prev) => prev.map((p) => (p._id === q._id ? q : p)))
     );
+
+    // Question deleted
     socket.on("deleteQuestion", (id) =>
       setQuestions((prev) => prev.filter((p) => p._id !== id))
     );
+
+    // Cleanup listeners on unmount
     return () => {
       socket.off("newQuestion");
       socket.off("updateQuestion");
@@ -50,19 +67,21 @@ export default function App() {
     };
   }, []);
 
+  // Function to add a new question via API
   const addQuestion = async (payload) => {
     try {
       await postQuestion(payload);
-      showNotification("Question posted successfully!", "success");
+      showNotification("Question posted successfully!", "success"); // Notify success
     } catch (err) {
       if (err.response && err.response.status === 409) {
-        showNotification("Duplicate question detected!", "warning");
+        showNotification("Duplicate question detected!", "warning"); // Notify duplicate
       } else {
-        showNotification("Failed to post question", "error");
+        showNotification("Failed to post question", "error"); // Notify failure
       }
     }
   };
 
+  // Function to update an existing question via API
   const patchQuestion = async (id, body) => {
     try {
       await updateQuestion(id, body);
@@ -71,29 +90,32 @@ export default function App() {
     }
   };
 
+  // Function to clear all questions
   const clearAll = async () => {
     if (!window.confirm("Are you sure you want to delete all questions?"))
-      return;
+      return; // Confirm action with user
     try {
-      await clearQuestions();
-      loadQuestions(statusFilter);
-      showNotification("All questions cleared!", "info");
+      await clearQuestions(); // API call to clear questions
+      loadQuestions(statusFilter); // Reload questions
+      showNotification("All questions cleared!", "info"); // Notify user
     } catch {
       showNotification("Failed to clear questions", "error");
     }
   };
 
+  // Function to delete a specific question
   const deleteQuestion = async (id) => {
     try {
-      // You'll need to add this to your api.js
+      // Uncomment if you add deleteQuestion API
       // await deleteQuestion(id);
-      setQuestions((prev) => prev.filter((q) => q._id !== id));
+      setQuestions((prev) => prev.filter((q) => q._id !== id)); // Remove from state
       showNotification("Question deleted!", "info");
     } catch {
       showNotification("Failed to delete question", "error");
     }
   };
 
+  // Function to clear questions conditionally (all or only answered)
   const doClear = async (onlyAnswered) => {
     const confirmMessage = onlyAnswered
       ? "Are you sure you want to clear all answered questions?"
@@ -102,8 +124,8 @@ export default function App() {
     if (!window.confirm(confirmMessage)) return;
 
     try {
-      await clearQuestions(onlyAnswered);
-      loadQuestions(statusFilter);
+      await clearQuestions(onlyAnswered); // API call with optional filter
+      loadQuestions(statusFilter); // Reload questions
       showNotification(
         onlyAnswered ? "Answered questions cleared!" : "All questions cleared!",
         "info"
@@ -113,6 +135,7 @@ export default function App() {
     }
   };
 
+  // Utility function to show temporary notifications
   const showNotification = (message, type) => {
     const notification = document.createElement("div");
     notification.style.cssText = `
@@ -146,6 +169,7 @@ export default function App() {
     }, 4000);
   };
 
+  // JSX for rendering the App UI
   return (
     <div className="app-container">
       {/* Animated Background */}
@@ -166,16 +190,16 @@ export default function App() {
         <NewQuestionForm onAdd={addQuestion} />
       </div>
 
-      {/* Filters */}
+      {/* Filters Component */}
       <div className="filters-wrapper">
         <Filters
-          status={statusFilter}
-          setStatus={setStatusFilter}
-          onClear={doClear}
+          status={statusFilter} // Current filter
+          setStatus={setStatusFilter} // Function to update filter
+          onClear={doClear} // Function to clear questions
         />
       </div>
 
-      {/* Error and Loading States */}
+      {/* Display error messages */}
       {error && (
         <div
           style={{
@@ -191,6 +215,7 @@ export default function App() {
         </div>
       )}
 
+      {/* Display loading state */}
       {loading && (
         <div
           style={{
@@ -215,13 +240,13 @@ export default function App() {
       {/* Questions Board */}
       <div className="sticky-board-wrapper">
         <StickyBoard
-          questions={questions}
-          onUpdate={patchQuestion}
-          onDelete={deleteQuestion}
+          questions={questions} // Pass questions to board
+          onUpdate={patchQuestion} // Update handler
+          onDelete={deleteQuestion} // Delete handler
         />
       </div>
 
-      {/* Clear All Button */}
+      {/* Clear All Questions Button */}
       <div className="clear-all-wrapper">
         <button className="btn-clear-all" onClick={clearAll}>
           <span style={{ marginRight: "8px" }}>🗑️</span>
