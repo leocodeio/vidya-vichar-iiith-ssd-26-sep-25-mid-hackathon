@@ -2,10 +2,11 @@ import { useAuth } from "@/context/AuthContext";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu";
-
+import { useNavigate } from "react-router-dom";
 
 export default function Header(){
       const { user, logout, loading } = useAuth();
+      const navigate = useNavigate();
     if(loading){
         return <>Loading</>
     }
