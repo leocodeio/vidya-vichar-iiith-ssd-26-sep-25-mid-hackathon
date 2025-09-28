@@ -2,19 +2,23 @@ import Question from "../models/Question.js";
 
 export const createQuestion = async (req, res) => {
   try {
-    const { text, author } = req.body;
+    const { text, author, roomId } = req.body;
     if (!text || !text.trim())
       return res.status(400).json({ message: "Question text required" });
+    if (!roomId) return res.status(400).json({ message: "Room ID required" });
 
-    // prevent exact-duplicate text within short time window (simple duplicate prevention)
-    const recentSame = await Question.findOne({ text: text.trim() });
-    if (recentSame) {
-      return res.status(409).json({ message: "Duplicate question" });
+    // prevent exact-duplicate text within the same room
+    const existing = await Question.findOne({ text: text.trim(), roomId });
+    if (existing) {
+      return res
+        .status(409)
+        .json({ message: "Duplicate question in this room" });
     }
 
     const q = new Question({
       text: text.trim(),
-      author: author ? author.trim() : undefined,
+      author: author ? author.trim() : req.user.username || "Anonymous",
+      roomId,
     });
     await q.save();
     const io = req.app.get("io");
@@ -47,7 +51,7 @@ export const updateQuestion = async (req, res) => {
     const { status, answer, priority } = req.body;
 
     const update = {};
-    if (status && ["unanswered", "addressed", "rejected"].includes(status))
+    if (status && ["unanswered", "answered", "rejected"].includes(status))
       update.status = status;
     if (answer !== undefined) update.answer = answer;
     if (priority && ["important", "normal"].includes(priority))
@@ -97,7 +101,8 @@ export const addAnswer = async (req, res) => {
     );
 
     if (!updated) return res.status(404).json({ error: "Not found" });
-    req.io.emit("updateQuestion", updated);
+    const io = req.app.get("io");
+    io.emit("updateQuestion", updated);
 
     res.json(updated);
   } catch (err) {

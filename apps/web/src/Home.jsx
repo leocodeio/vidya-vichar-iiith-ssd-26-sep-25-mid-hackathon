@@ -158,7 +158,7 @@ export default function App() {
       {/* Header */}
       <div className="header">
         <h1>VidyaVichar</h1>
-        <p>Live Questions & Answers Platform</p>
+        <p>Live Q&A Platform</p>
       </div>
 
       {/* Single Question Form */}

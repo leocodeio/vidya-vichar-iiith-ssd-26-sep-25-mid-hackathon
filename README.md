@@ -122,6 +122,31 @@ npx turbo link
 yarn exec turbo link
 pnpm exec turbo link
 ```
+# Workflow:
+1. User Authentication: 
+-  Users sign up or log in via the frontend (apps/web), which sends requests to the backend (apps/api/ controllers/authController.js).
+- Auth state is managed in the frontend (apps/web/src/context/AuthContext.jsx).
+2. Room creation and Management:
+- Faculty can create rooms (apps/api/controllers/roomController.js), generating a unique room ID.
+- Students and faculty join rooms using the room ID.
+3. Question posting and Management:
+- Students post questions to a room (apps/api/controllers/questionController.js).
+- Faculty can answer, reject, or mark questions as important.
+- All question actions are broadcast via Socket.io for real-time updates.
+4. Frontend Interaction:
+- The React app (apps/web/src/App.jsx) provides pages for all user flows.
+- Components like StickyBoard and StickyNote display questions and answers live.
+- Filters and controls allow sorting and clearing questions.
+5. Coming out of the room:
+- Students or faculty can leave the room, redirecting them to main page.
+
+
+## Summary
+* Faculty: Create rooms, manage questions.
+* Students: Join rooms, see all questions, ask questions.
+* Live Q&A: Real-time updates via Socket.io.
+* Frontend: React/Vite app for user interaction.
+* Backend: Express server for handling logic and data.
 
 ## Useful Links
 

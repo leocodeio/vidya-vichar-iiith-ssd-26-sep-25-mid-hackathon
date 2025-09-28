@@ -7,6 +7,7 @@ const RoomSchema = new mongoose.Schema({
   participants: [
     {
       name: { type: String, required: true },
+      participantId: { type: String },
       joinedAt: { type: Date, default: Date.now },
     },
   ],
