@@ -29,9 +29,9 @@ export default function Landing() {
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
       {/* Header */}
       <header className="flex justify-between items-center px-6 py-4 border-b">
-       <h1 className="text-2xl font-extrabold tracking-wide text-black">
-  VidyaVichar
-</h1>
+        <h1 className="text-2xl font-extrabold tracking-wide text-black">
+          VidyaVichar
+        </h1>
 
         <div className="flex items-center gap-4">
           {user ? (
@@ -54,7 +54,11 @@ export default function Landing() {
             </>
           ) : (
             <>
-              <Button variant="outline" size="sm" onClick={() => navigate("/login")}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/login")}
+              >
                 Login
               </Button>
               <Button size="sm" onClick={() => navigate("/signup")}>
@@ -72,8 +76,8 @@ export default function Landing() {
             Stay connected. Learn together.
           </h2>
           <p className="text-gray-600">
-            A collaborative platform where students, TAs, and faculty come together 
-            to create rooms, share knowledge, and inspect discussions.
+            A collaborative platform where students, TAs, and faculty come
+            together to create rooms, share knowledge, and inspect discussions.
           </p>
 
           {/* Role-based actions */}
@@ -89,7 +93,10 @@ export default function Landing() {
               </>
             )}
             {(user?.role === "ta" || user?.role === "faculty") && (
-              <Button variant="secondary" onClick={() => navigate("/inspect-qa")}>
+              <Button
+                variant="secondary"
+                onClick={() => navigate("/inspect-qa")}
+              >
                 Inspect Q/A
               </Button>
             )}
@@ -98,18 +105,17 @@ export default function Landing() {
       </main>
 
       {/* Footer */}
-     <footer className="py-6 text-center text-sm text-gray-600 border-t bg-gray-100">
-  <p className="mb-2">
-    Made with ❤️ by{" "}
-    <span className="font-medium text-gray-800">
-      Harsha · Teja · Ankit · Rohit · Krish
-    </span>
-  </p>
-  <p className="text-xs text-gray-500">
-    © {new Date().getFullYear()} Vidya Vichar. All rights reserved.
-  </p>
-</footer>
-
+      <footer className="py-6 text-center text-sm text-gray-600 border-t bg-gray-100">
+        <p className="mb-2">
+          Made with ❤️ by{" "}
+          <span className="font-medium text-gray-800">
+            Harsha · Teja · Ankit · Rohit · Krish
+          </span>
+        </p>
+        <p className="text-xs text-gray-500">
+          © {new Date().getFullYear()} Vidya Vichar. All rights reserved.
+        </p>
+      </footer>
     </div>
   );
 }
