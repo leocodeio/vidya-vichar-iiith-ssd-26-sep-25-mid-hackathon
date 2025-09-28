@@ -74,31 +74,37 @@ export default function Landing() {
           <h1 className="text-3xl font-normal text-gray-800 m-0 tracking-wide">
             vidya vichar
           </h1>
-          <div className="flex flex-col gap-4">
-            {user && lastRoomId && (
+          <div className="flex gap-8 justify-center">
+            {/* Student + Faculty can create/join */}
+            {(user?.role === "student" || user?.role === "faculty") && (
+              <>
+                <Button
+                  variant="outline"
+                  onClick={handleCreateRoom}
+                  className="px-6 py-3 text-base"
+                >
+                  create room
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleJoinRoom}
+                  className="px-6 py-3 text-base"
+                >
+                  join room
+                </Button>
+              </>
+            )}
+
+            {/* TA + Faculty can inspect */}
+            {(user?.role === "ta" || user?.role === "faculty") && (
               <Button
-                onClick={() => navigate(`/room/${lastRoomId}`)}
+                variant="outline"
+                onClick={() => navigate("/inspect-qa")}
                 className="px-6 py-3 text-base"
               >
-                Rejoin Last Room ({lastRoomId})
+                inspect q/a
               </Button>
             )}
-            <div className="flex gap-8 justify-center">
-              <Button
-                variant="outline"
-                onClick={handleCreateRoom}
-                className="px-6 py-3 text-base"
-              >
-                create room
-              </Button>
-              <Button
-                variant="outline"
-                onClick={handleJoinRoom}
-                className="px-6 py-3 text-base"
-              >
-                join room
-              </Button>
-            </div>
           </div>
         </div>
       </div>

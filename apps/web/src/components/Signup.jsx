@@ -74,6 +74,7 @@ export default function Signup() {
             >
               <option value="student">Student</option>
               <option value="faculty">Faculty</option>
+              <option value="ta">Teaching Assistant</option>
             </select>
             {error && <p className="text-red-500">{error}</p>}
             <Button type="submit" className="w-full">
